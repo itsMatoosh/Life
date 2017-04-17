@@ -31,10 +31,32 @@ public class SettingsPanel extends JPanel {
 		//New simulation button.
 		JButton newSimulation = new JButton("New Simulation");
 		newSimulation.addActionListener((ActionEvent e) -> {
+			SimulationManager.currentSimulation.stop();
 			SimulationManager.currentSimulation = new Simulation(new SimulationSettings());
 			AppFrame.simulationPanel.repaint();
 		});
 		add(newSimulation);
+		
+		//Start simulation button.
+		JButton startSimulation = new JButton("Start Simulation");
+		startSimulation.addActionListener((ActionEvent e) -> {
+			SimulationManager.currentSimulation.start();
+		});
+		add(startSimulation);
+		
+		//Pause simulation button.
+		JButton pauseSimulation = new JButton("Pause Simulation");
+		pauseSimulation.addActionListener((ActionEvent e) -> {
+			SimulationManager.currentSimulation.pause();
+		});
+		add(pauseSimulation);
+		
+		//Stop simulation button.
+		JButton stopSimulation = new JButton("Stop Simulation");
+		stopSimulation.addActionListener((ActionEvent e) -> {
+			SimulationManager.currentSimulation.stop();
+		});
+		add(stopSimulation);
 		
 		//Grid scale
 		JSlider scaleSlider = new JSlider(1, 50, DisplaySettings.gridScale);

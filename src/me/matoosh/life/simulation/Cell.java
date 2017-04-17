@@ -17,7 +17,7 @@ public class Cell {
 	/**
 	 * Neighbors of the cell.
 	 */
-	public Cell[] neighbors;
+	public Cell[] neighbors = new Cell[8];
 	
 	/**
 	 * X position of the cell.
@@ -27,15 +27,20 @@ public class Cell {
 	 * Y position of the cell.
 	 */
 	public int posY;
+	/**
+	 * The simulation this cell belongs to.
+	 */
+	public Simulation simulation;
 	
 	/**
 	 * Creates a cell with x and y coordinates.
 	 * @param x
 	 * @param y
 	 */
-	public Cell(int x, int y) {
+	public Cell(int x, int y, Simulation sim) {
 		this.posX = x;
 		this.posY = y;
+		this.simulation = sim;
 	}
 	/**
 	 * Caches the neighbors from the specified simulation.
@@ -50,7 +55,6 @@ public class Cell {
 		neighbors[5] = sim.getCellAt(posX - 1, posY - 1);
 		neighbors[6] = sim.getCellAt(posX, posY - 1);
 		neighbors[7] = sim.getCellAt(posX + 1, posY - 1);
-		
 	}
 	/**
 	 * Called when the cell has been clicked.

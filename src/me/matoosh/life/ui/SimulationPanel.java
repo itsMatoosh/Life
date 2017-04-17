@@ -123,7 +123,7 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 	 * @param yOffset
 	 */
 	private void paintCells(Simulation sim, Graphics2D graphics, Viewport viewport) {
-		graphics.setColor(Color.WHITE);
+		
 		
 		int cellSize = DisplaySettings.baseCellSize/DisplaySettings.gridScale;
 
@@ -131,6 +131,11 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 		 * Drawing every populated cell.
 		 */
 		for(Cell c : sim.state) {
+			if(c.isPopulated) {
+				graphics.setColor(Color.GREEN);
+			} else {
+				graphics.setColor(Color.RED);
+			}
 			int cellX = c.posX * cellSize + cellSize/2, cellY = c.posY * cellSize + cellSize/2;
 			
 			//Checking if the cell is within the viewport.
@@ -152,6 +157,19 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 		
 		return simulation.getCellAt(cellX, cellY);
 	}
+	/**
+	 * Gets the cell located at display coordinates x and y.
+	 * @param x
+	 * @param y
+	 * @param simulation
+	 * @return
+	 */
+	public Cell createCellAt(int x, int y, Simulation simulation) {
+		int cellSize = DisplaySettings.baseCellSize/DisplaySettings.gridScale;
+		int cellX = x/cellSize, cellY = y/cellSize;
+		
+		return simulation.createCellAt(cellX, cellY);
+	}
 
 	@Override
 	public void mousePressed(MouseEvent event) {
@@ -164,10 +182,13 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 	public void mouseReleased(MouseEvent event) {
 		_dragging = false;
 		
-		if(_lastChangeX < 10 && _lastChangeY < 10) {
-			getCellAt(event.getPoint().x, event.getPoint().y, SimulationManager.currentSimulation).onClick();
+		if(_lastChangeX < 5 && _lastChangeY < 5) {
+			createCellAt(event.getPoint().x + DisplaySettings.currentViewport.minX, event.getPoint().y + DisplaySettings.currentViewport.minY, SimulationManager.currentSimulation).onClick();
 			repaint();
 		}
+		
+		_lastChangeX = 0;
+		_lastChangeY = 0;
 	}
 	@Override
 	public void mouseDragged(MouseEvent event) {
@@ -175,8 +196,8 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 		
 		int changeX = point.x - _lastX;
 		int changeY = point.y - _lastY;
-		_lastChangeX = changeX;
-		_lastChangeY = changeY;
+		_lastChangeX += changeX;
+		_lastChangeY += changeY;
 		
 		DisplaySettings.currentViewport.move(-changeX, -changeY);
 		

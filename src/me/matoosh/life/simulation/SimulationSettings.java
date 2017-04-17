@@ -6,5 +6,8 @@ package me.matoosh.life.simulation;
  *
  */
 public class SimulationSettings {
-	
+	/**
+	 * Whether the simulation bounds should expand automatically.
+	 */
+	public boolean expandBounds = true;
 }
