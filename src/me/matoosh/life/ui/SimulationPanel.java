@@ -63,6 +63,15 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 		if(DisplaySettings.gridVisible) {		
 			paintGrid(graphics, DisplaySettings.currentViewport);
 		}
+		
+		//Bounds
+		if(DisplaySettings.showCurrentBounds) {
+			graphics.setColor(Color.BLUE);
+			int cellSize = DisplaySettings.baseCellSize/DisplaySettings.gridScale;
+			graphics.drawRect(-DisplaySettings.currentViewport.minX + SimulationManager.currentSimulation.currentBounds.minX * cellSize + cellSize/2, -DisplaySettings.currentViewport.minY + SimulationManager.currentSimulation.currentBounds.minY * cellSize + cellSize/2, 
+					(SimulationManager.currentSimulation.currentBounds.maxX - SimulationManager.currentSimulation.currentBounds.minX) * cellSize + cellSize/2, 
+					(SimulationManager.currentSimulation.currentBounds.maxY - SimulationManager.currentSimulation.currentBounds.minY) * cellSize + cellSize/2);
+		}
 	}
 	/**
 	 * Paints the simulation grid.
@@ -133,9 +142,12 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 		for(Cell c : sim.state) {
 			if(c.isPopulated) {
 				graphics.setColor(Color.GREEN);
+				if(!DisplaySettings.showAlive) continue;
 			} else {
 				graphics.setColor(Color.RED);
+				if(!DisplaySettings.showDead) continue;
 			}
+			
 			int cellX = c.posX * cellSize + cellSize/2, cellY = c.posY * cellSize + cellSize/2;
 			
 			//Checking if the cell is within the viewport.

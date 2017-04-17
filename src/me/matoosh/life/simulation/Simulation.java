@@ -1,6 +1,7 @@
 package me.matoosh.life.simulation;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -22,7 +23,7 @@ public class Simulation {
 	/**
 	 * The current state of the array.
 	 */
-	public ArrayList<Cell> state = new ArrayList<Cell>();
+	public List<Cell> state = new ArrayList<Cell>();
 	/**
 	 * Whether the simulation has been paused.
 	 */
@@ -31,6 +32,10 @@ public class Simulation {
 	 * The current bounds of the simulation.
 	 */
 	public SimulationBounds currentBounds;
+	/**
+	 * Steps to make even whern the simulation is paused.
+	 */
+	public int stepsToMake = 0;
 	
 	/**
 	 * Scheduler of this simulation.
@@ -63,7 +68,7 @@ public class Simulation {
 	    }
 	    
 		//Creating the handle.
-		simulationHandle = scheduler.scheduleAtFixedRate(new SimulationLogic(this), 170, 170, TimeUnit.MILLISECONDS);
+		simulationHandle = scheduler.scheduleAtFixedRate(new SimulationLogic(this), 50, 50, TimeUnit.MILLISECONDS);
 	}
 	/**
 	 * Pauses the simulation.
@@ -96,7 +101,7 @@ public class Simulation {
 		}
 		//Creating the missing, dead cell.
 		if(found == null && currentBounds.isInBounds(x, y)) {
-			found = new Cell(x, y, this);
+			found = new Cell(x, y);
 			state.add(found);
 		}
 		
@@ -140,7 +145,7 @@ public class Simulation {
 			currentBounds.minY = y - 5;
 		}
 		
-		System.out.println("New bounds: " + currentBounds.minX + "," + currentBounds.minY + " - " + currentBounds.maxX + "," + currentBounds.maxY);
+		//System.out.println("New bounds: " + currentBounds.minX + "," + currentBounds.minY + " - " + currentBounds.maxX + "," + currentBounds.maxY);
 	}
 	
 	/**
@@ -165,57 +170,51 @@ public class Simulation {
 		@Override
 		public void run() {
 			if(isPaused) {
-				return;
+				if(stepsToMake > 0) {
+					stepsToMake--;
+				} else {
+					return;	
+				}
 			}
 			//Logic.
-			Cell topRight = null, bottomLeft = null;
+			int maxX = 0, maxY = 0, minX = 0, minY = 0;
+			
+			//Counting neighbors.
 			for(int i = 0; i < state.size(); i++) {
-				int liveNeighbors = 0;
-
+				state.get(i).cacheNeighbors(simulation);			
+			}
+			//Logic.
+			for(int i = 0; i < state.size(); i++) {
 				Cell c = state.get(i);
 				
-				if(topRight == null) {
-					topRight = c;
-				}
-				if(bottomLeft == null) {
-					bottomLeft = c;
-				}
-				
-				for (Cell n : c.neighbors) {
-					if(n == null) {
-						//System.out.println("sss");
-						c.cacheNeighbors(simulation);
-					} else {
-						//System.out.println("sssxdcdac");
-					}
-					if(n != null && n.isPopulated) {
-						liveNeighbors++;
-					}
-				}
 				if(c.isPopulated) {
-					if(liveNeighbors == 2 || liveNeighbors == 3) {
-						System.out.println("Still Alive");
+					if(c.livingNeighbors == 2 || c.livingNeighbors == 3) {
 						c.isPopulated = true;
 					} else {
-						System.out.println("Death");
 						c.isPopulated = false;
 					}
 				} else {
-					if(liveNeighbors == 3) {
-						System.out.println("Copulation");
-						if(topRight == null || c.posX > topRight.posX || c.posY > topRight.posY) {
-							topRight = c;
+					if(c.livingNeighbors == 3) {
+						//System.out.println("Copulation");
+						if(c.posX > maxX) {
+							maxX = c.posX;
 						}
-						if(bottomLeft == null || c.posX < bottomLeft.posX || c.posY < bottomLeft.posY) {
-							bottomLeft = c;
-						}	
+						else if(c.posX < minX) {
+							minX = c.posX;
+						}
+						if(c.posY > maxY) {
+							maxY = c.posY;
+						}
+						else if(c.posY < minY) {
+							minY = c.posY;
+						}
 						c.isPopulated = true;
 					}
 				}
 			}
 			
-			expandBounds(bottomLeft.posX - 3, bottomLeft.posY - 3);
-			expandBounds(topRight.posX + 3, bottomLeft.posY + 3);
+			expandBounds(minX - 4, minY - 4);
+			expandBounds(maxX + 4, maxY + 4);
 			AppFrame.simulationPanel.repaint();
 		}
 	}

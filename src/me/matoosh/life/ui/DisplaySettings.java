@@ -26,4 +26,16 @@ public class DisplaySettings {
 	 * The current viewport.
 	 */
 	public static Viewport currentViewport;
+	/**
+	 * Whether to show the dead cells.
+	 */
+	public static boolean showDead = false;
+	/**
+	 * Whether to show the alive cells.
+	 */
+	public static boolean showAlive = true;
+	/**
+	 * Whether to show the current bounds.
+	 */
+	public static boolean showCurrentBounds = false;
 }

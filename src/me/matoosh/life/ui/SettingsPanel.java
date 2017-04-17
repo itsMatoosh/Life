@@ -27,16 +27,7 @@ public class SettingsPanel extends JPanel {
 	/**
 	 * Adds content to the panel.
 	 */
-	private void addContent() {
-		//New simulation button.
-		JButton newSimulation = new JButton("New Simulation");
-		newSimulation.addActionListener((ActionEvent e) -> {
-			SimulationManager.currentSimulation.stop();
-			SimulationManager.currentSimulation = new Simulation(new SimulationSettings());
-			AppFrame.simulationPanel.repaint();
-		});
-		add(newSimulation);
-		
+	private void addContent() {		
 		//Start simulation button.
 		JButton startSimulation = new JButton("Start Simulation");
 		startSimulation.addActionListener((ActionEvent e) -> {
@@ -51,12 +42,28 @@ public class SettingsPanel extends JPanel {
 		});
 		add(pauseSimulation);
 		
+		//Simulation step button.
+		JButton stepSimulation = new JButton("Simulate Step");
+		stepSimulation.addActionListener((ActionEvent e) -> {
+			SimulationManager.currentSimulation.stepsToMake++;
+		});
+		add(stepSimulation);
+		
 		//Stop simulation button.
 		JButton stopSimulation = new JButton("Stop Simulation");
 		stopSimulation.addActionListener((ActionEvent e) -> {
 			SimulationManager.currentSimulation.stop();
 		});
 		add(stopSimulation);
+		//New simulation button.
+		JButton newSimulation = new JButton("New Simulation");
+		newSimulation.addActionListener((ActionEvent e) -> {
+			SimulationManager.currentSimulation.stop();
+			SimulationManager.currentSimulation = new Simulation(new SimulationSettings());
+			DisplaySettings.currentViewport = new Viewport(AppFrame.simulationPanel);
+			AppFrame.simulationPanel.repaint();
+		});
+		add(newSimulation);
 		
 		//Grid scale
 		JSlider scaleSlider = new JSlider(1, 50, DisplaySettings.gridScale);
@@ -77,5 +84,29 @@ public class SettingsPanel extends JPanel {
 	            AppFrame.simulationPanel.repaint();
 	      });
 		add(gridToggle);
+		//Show alive
+		JToggleButton aliveToggle = new JToggleButton("Show alive", DisplaySettings.showAlive);
+		aliveToggle.addActionListener((ActionEvent e) -> {
+	            JToggleButton tBtn = (JToggleButton)e.getSource();
+	            DisplaySettings.showAlive = tBtn.isSelected();
+	            AppFrame.simulationPanel.repaint();
+	      });
+		add(aliveToggle);
+		//Show dead
+		JToggleButton deadToggle = new JToggleButton("Show dead", DisplaySettings.showDead);
+		deadToggle.addActionListener((ActionEvent e) -> {
+	            JToggleButton tBtn = (JToggleButton)e.getSource();
+	            DisplaySettings.showDead = tBtn.isSelected();
+	            AppFrame.simulationPanel.repaint();
+	      });
+		add(deadToggle);
+		//Show bounds
+		JToggleButton boundsToggle = new JToggleButton("Show bounds", DisplaySettings.showCurrentBounds);
+		boundsToggle.addActionListener((ActionEvent e) -> {
+	            JToggleButton tBtn = (JToggleButton)e.getSource();
+	            DisplaySettings.showCurrentBounds = tBtn.isSelected();
+	            AppFrame.simulationPanel.repaint();
+	      });
+		add(boundsToggle);
 	}
 }
