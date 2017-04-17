@@ -2,6 +2,7 @@ package me.matoosh.life.ui;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -64,6 +65,18 @@ public class SettingsPanel extends JPanel {
 			AppFrame.simulationPanel.repaint();
 		});
 		add(newSimulation);
+		//Randomize button.
+		JButton randomizeSimulation = new JButton("Randomize");
+		randomizeSimulation.addActionListener((ActionEvent e) -> {
+			Random random = new Random();
+			for(int i = 0; i < SimulationManager.currentSimulation.state.size(); i++) {
+				if(random.nextInt(2) == 1) {
+					SimulationManager.currentSimulation.state.get(i).isPopulated = true;
+				}
+			}
+			AppFrame.simulationPanel.repaint();
+		});
+		add(randomizeSimulation);
 		
 		//Grid scale
 		JSlider scaleSlider = new JSlider(1, 50, DisplaySettings.gridScale);

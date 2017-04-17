@@ -123,6 +123,19 @@ public class Simulation {
 		return found;
 	}
 	/**
+	 * Updates the bounds of the simulation.
+	 * @param x
+	 * @param y
+	 */
+	private void updateBounds() {
+		for(int c = 0; c < state.size(); c++) {
+			Cell cell = state.get(c);
+			if(!currentBounds.isInBounds(cell.posX, cell.posY, 4)) {
+				state.remove(c);
+			}
+		}
+	}
+	/**
 	 * Expands the bounds of the simulation to fit the specified point.
 	 * @param x
 	 * @param y
@@ -213,8 +226,11 @@ public class Simulation {
 				}
 			}
 			
-			expandBounds(minX - 4, minY - 4);
-			expandBounds(maxX + 4, maxY + 4);
+			currentBounds.minX = minX - 4;
+			currentBounds.minY = minY - 4;
+			currentBounds.maxX = maxX + 4;
+			currentBounds.maxY = maxY + 4;
+			updateBounds();
 			AppFrame.simulationPanel.repaint();
 		}
 	}
@@ -231,6 +247,13 @@ public class Simulation {
 		
 		public boolean isInBounds(int x, int y) {
 			if(x > minX && x < maxX && y > minY && y < maxY) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		public boolean isInBounds(int x, int y, int tolerance) {
+			if(x > (minX - tolerance) && x < (maxX + tolerance) && y > (minY - tolerance) && y < (maxY + tolerance)) {
 				return true;
 			} else {
 				return false;
