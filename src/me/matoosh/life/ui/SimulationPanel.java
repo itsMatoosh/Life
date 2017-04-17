@@ -10,6 +10,10 @@ import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 
+import me.matoosh.life.simulation.Cell;
+import me.matoosh.life.simulation.Simulation;
+import me.matoosh.life.simulation.SimulationManager;
+
 /**
  * Panel where the life simulation is drawn.
  * @author Mateusz Rêbacz
@@ -18,6 +22,7 @@ import javax.swing.JPanel;
 public class SimulationPanel extends JPanel implements MouseListener, MouseMotionListener {
 	//Dragging vars
 	private int _lastX = -1, _lastY = -1;
+	private int _lastChangeX = -1, _lastChangeY = -1;
 	private boolean _dragging = false;
 	
 	/**
@@ -36,13 +41,27 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 		//Type conv
 		Graphics2D graphics = (Graphics2D) g;
 		
+		//Scaling the viewport.
+		if(DisplaySettings.currentViewport == null) {
+			DisplaySettings.currentViewport = new Viewport(this);
+		}
+		DisplaySettings.currentViewport.resize(this);
+		
 		//Painting.
 		//Backgound
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
+		if(SimulationManager.currentSimulation == null) return;
+		
+		//Cells
+		if(DisplaySettings.cellsVisible) {
+			paintCells(SimulationManager.currentSimulation, graphics, DisplaySettings.currentViewport);
+		}
+		
+		//Grid
 		if(DisplaySettings.gridVisible) {		
-			paintGrid(graphics, getSize().height, getSize().width, DisplaySettings.gridXOffset, DisplaySettings.gridYOffset);
+			paintGrid(graphics, DisplaySettings.currentViewport);
 		}
 	}
 	/**
@@ -53,53 +72,85 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 	 * @param xOffset
 	 * @param yOffset
 	 */
-	private void paintGrid(Graphics2D graphics, int height, int width, int xOffset, int yOffset) {
-		graphics.setColor(Color.GRAY);
-		
+	private void paintGrid(Graphics2D graphics, Viewport viewport) {
+		graphics.setColor(Color.GRAY);	
 		int baseSize = DisplaySettings.baseCellSize;
-		//Height
-		if(height % (baseSize / DisplaySettings.gridScale) != 0) {
-			height = (height / (baseSize / DisplaySettings.gridScale) + 1)*(baseSize / DisplaySettings.gridScale);
-		}
-		//Width
-		if(width % (baseSize / DisplaySettings.gridScale) != 0) {
-			width = (width / (baseSize / DisplaySettings.gridScale) + 1)*(baseSize / DisplaySettings.gridScale);
-		}
 		
 		//Num of rows to draw
-		int rows = height  / (baseSize / DisplaySettings.gridScale);
-		int rowHeight = height/rows;
+		int rows = viewport.height  / (baseSize / DisplaySettings.gridScale);
+		int rowHeight = viewport.height/rows;
 		//Num of columns to draw
-		int columns = width / (baseSize / DisplaySettings.gridScale);
-		int columnWidth = width/columns;
+		int columns = viewport.width / (baseSize / DisplaySettings.gridScale);
+		int columnWidth = viewport.width/columns;
+		int offsetX = -viewport.minX;
 		
 		//System.out.println("Y offset: " + yOffset);
 		//Rows
 		for(int i = 0; i <= rows; i++) {	
-			if(i * rowHeight + yOffset < 0) {
-				int localYOffset = yOffset - rowHeight*rows*((i * rowHeight + yOffset - height) / height);
-				graphics.drawLine(0, i * rowHeight + localYOffset, width, i * rowHeight + localYOffset);	
-			} else if (i * rowHeight + yOffset > height) {
-				int localYOffset = yOffset - rowHeight*rows*((i * rowHeight + yOffset) / height);
-				graphics.drawLine(0, i * rowHeight + localYOffset, width, i * rowHeight + localYOffset);	
-			} else {
-				graphics.drawLine(0, i * rowHeight + yOffset, width, i * rowHeight + yOffset);	
+			//Checking if the line is in the viewport.
+			if(i*rowHeight - viewport.minY > viewport.height) {
+				int localOffset = -viewport.minY - rowHeight * rows * ((i * rowHeight - viewport.minY) / viewport.height);
+				graphics.drawLine(0, i * rowHeight + localOffset, viewport.width, i * rowHeight + localOffset);	
+			} else if(i*rowHeight - viewport.minY < 0) {
+				int localOffset = -viewport.minY - rowHeight * (rows + 1) * ((i * rowHeight - viewport.minY - viewport.height) / viewport.height);
+				graphics.drawLine(0, i * rowHeight + localOffset, viewport.width, i * rowHeight + localOffset);	
+			}
+			else {
+				graphics.drawLine(0, i*rowHeight - viewport.minY, viewport.width, i*rowHeight - viewport.minY);
 			}
 		}
 		
 		//System.out.println("X offset: " + xOffset);
 		//Columns
 		for(int i = 0; i <= columns; i++) {
-			if(i * columnWidth + xOffset < 0) {
-				int localXOffset = xOffset - columnWidth*columns*((i * columnWidth + xOffset - width) / width);
-				graphics.drawLine(i * columnWidth + localXOffset, 0, i * columnWidth + localXOffset, height);	
-			} else if (i * columnWidth + xOffset > height) {
-				int localXOffset = xOffset - columnWidth*columns*((i * columnWidth + xOffset) / width);
-				graphics.drawLine(i * columnWidth + localXOffset, 0, i * columnWidth + localXOffset, height);	
+			if(i * columnWidth + offsetX < 0) {
+				int localXOffset = offsetX - columnWidth*columns*((i * columnWidth + offsetX - viewport.width) / viewport.width);
+				graphics.drawLine(i * columnWidth + localXOffset, 0, i * columnWidth + localXOffset, viewport.height);	
+			} else if (i * columnWidth + offsetX > viewport.height) {
+				int localXOffset = offsetX - columnWidth*columns*((i * columnWidth + offsetX) / viewport.width);
+				graphics.drawLine(i * columnWidth + localXOffset, 0, i * columnWidth + localXOffset, viewport.height);	
 			} else {
-				graphics.drawLine(i * columnWidth + xOffset, 0, i * columnWidth + xOffset, height);	
+				graphics.drawLine(i * columnWidth + offsetX, 0, i * columnWidth + offsetX, viewport.height);	
 			}
 		}
+	}
+	/**
+	 * Paints the cells in the simulation.
+	 * @param graphics
+	 * @param height
+	 * @param width
+	 * @param xOffset
+	 * @param yOffset
+	 */
+	private void paintCells(Simulation sim, Graphics2D graphics, Viewport viewport) {
+		graphics.setColor(Color.WHITE);
+		
+		int cellSize = DisplaySettings.baseCellSize/DisplaySettings.gridScale;
+
+		/**
+		 * Drawing every populated cell.
+		 */
+		for(Cell c : sim.state) {
+			int cellX = c.posX * cellSize + cellSize/2, cellY = c.posY * cellSize + cellSize/2;
+			
+			//Checking if the cell is within the viewport.
+			if(cellY - cellSize/2 < viewport.maxY && cellY + cellSize/2 > viewport.minY && cellX - cellSize/2 < viewport.maxX && cellX + cellSize/2 > viewport.minX) {
+				graphics.fillRect(cellX - cellSize/2 - viewport.minX, cellY - cellSize/2 - viewport.minY, cellSize, cellSize);
+			}
+		}
+	}
+	/**
+	 * Gets the cell located at display coordinates x and y.
+	 * @param x
+	 * @param y
+	 * @param simulation
+	 * @return
+	 */
+	public Cell getCellAt(int x, int y, Simulation simulation) {
+		int cellSize = DisplaySettings.baseCellSize/DisplaySettings.gridScale;
+		int cellX = x/cellSize, cellY = y/cellSize;
+		
+		return simulation.getCellAt(cellX, cellY);
 	}
 
 	@Override
@@ -112,6 +163,11 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 	@Override
 	public void mouseReleased(MouseEvent event) {
 		_dragging = false;
+		
+		if(_lastChangeX < 10 && _lastChangeY < 10) {
+			getCellAt(event.getPoint().x, event.getPoint().y, SimulationManager.currentSimulation).onClick();
+			repaint();
+		}
 	}
 	@Override
 	public void mouseDragged(MouseEvent event) {
@@ -119,9 +175,10 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 		
 		int changeX = point.x - _lastX;
 		int changeY = point.y - _lastY;
+		_lastChangeX = changeX;
+		_lastChangeY = changeY;
 		
-		DisplaySettings.gridXOffset += changeX;
-		DisplaySettings.gridYOffset += changeY;
+		DisplaySettings.currentViewport.move(-changeX, -changeY);
 		
 		_lastX = point.x;
 		_lastY = point.y;

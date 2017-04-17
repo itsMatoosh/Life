@@ -15,15 +15,15 @@ public class DisplaySettings {
 	 */
 	public static int gridScale = 5;
 	/**
-	 * The x offset of the grid.
-	 */
-	public static int gridXOffset = 0;
-	/**
-	 * The y offset of the grid.
-	 */
-	public static int gridYOffset = 0;
-	/**
 	 * Size of a cell at scale 1.
 	 */
 	protected static int baseCellSize = 200;
+	/**
+	 * Whether the cells should be displayed.
+	 */
+	public static boolean cellsVisible = true;
+	/**
+	 * The current viewport.
+	 */
+	public static Viewport currentViewport;
 }

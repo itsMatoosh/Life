@@ -2,13 +2,16 @@ package me.matoosh.life.ui;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+
+import me.matoosh.life.simulation.Simulation;
+import me.matoosh.life.simulation.SimulationManager;
+import me.matoosh.life.simulation.SimulationSettings;
 
 /**
  * Panel with the simulation settings.
@@ -25,6 +28,14 @@ public class SettingsPanel extends JPanel {
 	 * Adds content to the panel.
 	 */
 	private void addContent() {
+		//New simulation button.
+		JButton newSimulation = new JButton("New Simulation");
+		newSimulation.addActionListener((ActionEvent e) -> {
+			SimulationManager.currentSimulation = new Simulation(new SimulationSettings());
+			AppFrame.simulationPanel.repaint();
+		});
+		add(newSimulation);
+		
 		//Grid scale
 		JSlider scaleSlider = new JSlider(1, 50, DisplaySettings.gridScale);
 		scaleSlider.addChangeListener((ChangeEvent e) -> {

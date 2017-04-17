@@ -10,7 +10,6 @@ import me.matoosh.life.ui.AppFrame;
  *
  */
 public class Life {
-
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
             @Override
