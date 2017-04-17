@@ -36,16 +36,6 @@ public class SettingsPanel extends JPanel {
 		});
 		add(scaleSlider);
 		
-		//Grid x offset
-		JSlider xOffset = new JSlider(0, 1000, DisplaySettings.gridXOffset);
-		xOffset.addChangeListener(new XOffsetChangeListener());
-		add(xOffset);
-		
-		//Grid y offset
-		JSlider yOffset = new JSlider(0, 1000, DisplaySettings.gridYOffset);
-		yOffset.addChangeListener(new YOffsetChangeListener());
-		add(yOffset);
-		
 		//Show grid
 		JToggleButton gridToggle = new JToggleButton("Show grid", DisplaySettings.gridVisible);
 		gridToggle.addActionListener((ActionEvent e) -> {
@@ -54,40 +44,5 @@ public class SettingsPanel extends JPanel {
 	            AppFrame.simulationPanel.repaint();
 	      });
 		add(gridToggle);
-	}
-	
-	/**
-	 * Listens for the scale change event.
-	 * @author Mateusz Rêbacz
-	 *
-	 */
-	private class XOffsetChangeListener implements ChangeListener {
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			JSlider source = (JSlider)e.getSource();
-		    if (!source.getValueIsAdjusting()) {
-		        DisplaySettings.gridXOffset = (int)source.getValue();
-		        AppFrame.simulationPanel.repaint();
-		    }
-		}
-		
-	}
-	/**
-	 * Listens for the scale change event.
-	 * @author Mateusz Rêbacz
-	 *
-	 */
-	private class YOffsetChangeListener implements ChangeListener {
-
-		@Override
-		public void stateChanged(ChangeEvent e) {
-			JSlider source = (JSlider)e.getSource();
-		    if (!source.getValueIsAdjusting()) {
-		        DisplaySettings.gridYOffset = (int)source.getValue();
-		        AppFrame.simulationPanel.repaint();
-		    }
-		}
-		
 	}
 }

@@ -16,7 +16,6 @@ import javax.swing.JPanel;
  *
  */
 public class SimulationPanel extends JPanel implements MouseListener, MouseMotionListener {
-	
 	//Dragging vars
 	private int _lastX = -1, _lastY = -1;
 	private boolean _dragging = false;
@@ -57,32 +56,48 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 	private void paintGrid(Graphics2D graphics, int height, int width, int xOffset, int yOffset) {
 		graphics.setColor(Color.GRAY);
 		
-		//Num of rows to draw
-		int rows = getSize().height  / (200 / DisplaySettings.gridScale);
-		//Num of columns to draw
-		int columns = getSize().width / (200 / DisplaySettings.gridScale);
+		int baseSize = DisplaySettings.baseCellSize;
+		//Height
+		if(height % (baseSize / DisplaySettings.gridScale) != 0) {
+			height = (height / (baseSize / DisplaySettings.gridScale) + 1)*(baseSize / DisplaySettings.gridScale);
+		}
+		//Width
+		if(width % (baseSize / DisplaySettings.gridScale) != 0) {
+			width = (width / (baseSize / DisplaySettings.gridScale) + 1)*(baseSize / DisplaySettings.gridScale);
+		}
 		
-		System.out.println("Y offset: " + yOffset);
+		//Num of rows to draw
+		int rows = height  / (baseSize / DisplaySettings.gridScale);
+		int rowHeight = height/rows;
+		//Num of columns to draw
+		int columns = width / (baseSize / DisplaySettings.gridScale);
+		int columnWidth = width/columns;
+		
+		//System.out.println("Y offset: " + yOffset);
 		//Rows
 		for(int i = 0; i <= rows; i++) {	
-			if(i * (height/rows) + yOffset < 0) {
-				graphics.drawLine(0, i * (height/rows) + yOffset - ((i * (height/rows) + yOffset - height) / height)*((rows + 1)*(height/rows)), width, i * (height/rows) + yOffset - ((i * (height/rows) + yOffset - height) / height)*((rows + 1)*(height/rows)));	
-			} else if (i * (height/rows) + yOffset > height) {
-				graphics.drawLine(0, i * (height/rows) + yOffset - ((i * (height/rows) + yOffset) / height)*((rows + 1)*(height/rows)), width, i * (height/rows) + yOffset - ((i * (height/rows) + yOffset) / height)*((rows + 1)*(height/rows)));	
+			if(i * rowHeight + yOffset < 0) {
+				int localYOffset = yOffset - rowHeight*rows*((i * rowHeight + yOffset - height) / height);
+				graphics.drawLine(0, i * rowHeight + localYOffset, width, i * rowHeight + localYOffset);	
+			} else if (i * rowHeight + yOffset > height) {
+				int localYOffset = yOffset - rowHeight*rows*((i * rowHeight + yOffset) / height);
+				graphics.drawLine(0, i * rowHeight + localYOffset, width, i * rowHeight + localYOffset);	
 			} else {
-				graphics.drawLine(0, i * (height/rows) + yOffset, width, i * (height/rows) + yOffset);	
+				graphics.drawLine(0, i * rowHeight + yOffset, width, i * rowHeight + yOffset);	
 			}
 		}
 		
-		System.out.println("X offset: " + xOffset);
+		//System.out.println("X offset: " + xOffset);
 		//Columns
 		for(int i = 0; i <= columns; i++) {
-			if(i * (width/columns) + xOffset < 0) {
-				graphics.drawLine(i * (width/columns) + xOffset - ((i * (width/columns) + xOffset - width) / width)*((columns + 1)*(width/columns)), 0, i * (width/columns) + xOffset - ((i * (width/columns) + xOffset - width) / width)*((columns + 1)*(width/columns)), height);	
-			} else if (i * (width/columns) + xOffset > height) {
-				graphics.drawLine(i * (width/columns) + xOffset - ((i * (width/columns) + xOffset) / width)*((columns + 1)*(width/columns)), 0, i * (width/columns) + xOffset - ((i * (width/columns) + xOffset) / width)*((columns + 1)*(width/columns)), height);	
+			if(i * columnWidth + xOffset < 0) {
+				int localXOffset = xOffset - columnWidth*columns*((i * columnWidth + xOffset - width) / width);
+				graphics.drawLine(i * columnWidth + localXOffset, 0, i * columnWidth + localXOffset, height);	
+			} else if (i * columnWidth + xOffset > height) {
+				int localXOffset = xOffset - columnWidth*columns*((i * columnWidth + xOffset) / width);
+				graphics.drawLine(i * columnWidth + localXOffset, 0, i * columnWidth + localXOffset, height);	
 			} else {
-				graphics.drawLine(i * (width/columns) + xOffset, 0, i * (width/columns) + xOffset, height);	
+				graphics.drawLine(i * columnWidth + xOffset, 0, i * columnWidth + xOffset, height);	
 			}
 		}
 	}

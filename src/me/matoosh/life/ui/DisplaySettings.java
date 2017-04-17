@@ -22,4 +22,8 @@ public class DisplaySettings {
 	 * The y offset of the grid.
 	 */
 	public static int gridYOffset = 0;
+	/**
+	 * Size of a cell at scale 1.
+	 */
+	protected static int baseCellSize = 200;
 }
