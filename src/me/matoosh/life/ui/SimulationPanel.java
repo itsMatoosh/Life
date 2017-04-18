@@ -139,7 +139,8 @@ public class SimulationPanel extends JPanel implements MouseListener, MouseMotio
 		/**
 		 * Drawing every populated cell.
 		 */
-		for(Cell c : sim.state) {
+		for(int i = 0; i < sim.state.size(); i++) {
+			Cell c = sim.state.get(i);
 			if(c.isPopulated) {
 				graphics.setColor(Color.GREEN);
 				if(!DisplaySettings.showAlive) continue;

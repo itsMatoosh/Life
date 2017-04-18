@@ -11,6 +11,11 @@ public class Cell {
 	 */
 	public boolean isPopulated;
 	/**
+	 * Sets the cell into the new state.
+	 */
+	public boolean setPopulated;
+	
+	/**
 	 * Neighbors of the cell.
 	 */
 	public Cell[] neighbors = new Cell[8];

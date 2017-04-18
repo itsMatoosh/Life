@@ -196,40 +196,47 @@ public class Simulation {
 			for(int i = 0; i < state.size(); i++) {
 				state.get(i).cacheNeighbors(simulation);			
 			}
+			
 			//Logic.
 			for(int i = 0; i < state.size(); i++) {
 				Cell c = state.get(i);
 				
 				if(c.isPopulated) {
+					if(c.posX > maxX) {
+						maxX = c.posX;
+					}
+					else if(c.posX < minX) {
+						minX = c.posX;
+					}
+					if(c.posY > maxY) {
+						maxY = c.posY;
+					}
+					else if(c.posY < minY) {
+						minY = c.posY;
+					}
+					
 					if(c.livingNeighbors == 2 || c.livingNeighbors == 3) {
-						c.isPopulated = true;
+						c.setPopulated = true;
 					} else {
-						c.isPopulated = false;
+						c.setPopulated = false;
 					}
 				} else {
 					if(c.livingNeighbors == 3) {
 						//System.out.println("Copulation");
-						if(c.posX > maxX) {
-							maxX = c.posX;
-						}
-						else if(c.posX < minX) {
-							minX = c.posX;
-						}
-						if(c.posY > maxY) {
-							maxY = c.posY;
-						}
-						else if(c.posY < minY) {
-							minY = c.posY;
-						}
-						c.isPopulated = true;
+						c.setPopulated = true;
 					}
 				}
 			}
+		
+			//Counting neighbors.
+			for(Cell c : state) {
+				c.isPopulated = c.setPopulated;		
+			}
 			
-			currentBounds.minX = minX - 4;
-			currentBounds.minY = minY - 4;
-			currentBounds.maxX = maxX + 4;
-			currentBounds.maxY = maxY + 4;
+			currentBounds.minX = minX - 5;
+			currentBounds.minY = minY - 5;
+			currentBounds.maxX = maxX + 5;
+			currentBounds.maxY = maxY + 5;
 			updateBounds();
 			AppFrame.simulationPanel.repaint();
 		}
