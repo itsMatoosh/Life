@@ -11,7 +11,7 @@ import me.matoosh.life.ui.AppFrame;
 
 /**
  * Represents a single simulation.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rï¿½bacz
  *
  */
 public class Simulation {
@@ -163,7 +163,7 @@ public class Simulation {
 	
 	/**
 	 * Threadable simulation logic.
-	 * @author Mateusz Rêbacz
+	 * @author Mateusz Rï¿½bacz
 	 *
 	 */
 	public class SimulationLogic implements Runnable {
@@ -202,6 +202,19 @@ public class Simulation {
 				Cell c = state.get(i);
 				
 				if(c.isPopulated) {
+					if(maxX == 0) {
+						maxX = c.posX;
+					}
+					if(maxY == 0) {
+						maxY = c.posY;
+					}
+					if(minX == 0) {
+						minX = c.posX;
+					}
+					if(minY == 0) {
+						minY = c.posY;
+					}
+					
 					if(c.posX > maxX) {
 						maxX = c.posX;
 					}
@@ -224,6 +237,32 @@ public class Simulation {
 					if(c.livingNeighbors == 3) {
 						//System.out.println("Copulation");
 						c.setPopulated = true;
+						
+						if(maxX == 0) {
+							maxX = c.posX;
+						}
+						if(maxY == 0) {
+							maxY = c.posY;
+						}
+						if(minX == 0) {
+							minX = c.posX;
+						}
+						if(minY == 0) {
+							minY = c.posY;
+						}
+						
+						if(c.posX > maxX) {
+							maxX = c.posX;
+						}
+						else if(c.posX < minX) {
+							minX = c.posX;
+						}
+						if(c.posY > maxY) {
+							maxY = c.posY;
+						}
+						else if(c.posY < minY) {
+							minY = c.posY;
+						}
 					}
 				}
 			}
@@ -243,7 +282,7 @@ public class Simulation {
 	}
 	/**
 	 * The bounds of the simulation.
-	 * @author Mateusz Rêbacz
+	 * @author Mateusz Rï¿½bacz
 	 *
 	 */
 	public class SimulationBounds {
