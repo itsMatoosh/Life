@@ -33,7 +33,7 @@ public class Simulation {
 	 */
 	public SimulationBounds currentBounds;
 	/**
-	 * Steps to make even whern the simulation is paused.
+	 * Steps to make even when the simulation is paused.
 	 */
 	public int stepsToMake = 0;
 	
