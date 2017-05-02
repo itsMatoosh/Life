@@ -6,10 +6,10 @@ script: ant build
 deploy:
   provider: releases
   api_key: 
-    secure: bc64fa3a6b3df149b5364eaae7d91ffe5e17ed23
+    secure: 9b465f986afaa4c27c714049711a2b864d704908
   file: 
    - "README.md"
-   - "Life.jar"
+   - "bin/Life.jar"
   skip_cleanup: true
   on:
     tags: true
