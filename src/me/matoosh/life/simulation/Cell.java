@@ -2,7 +2,7 @@ package me.matoosh.life.simulation;
 
 /**
  * A single cell of the simulation.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rebacz
  *
  */
 public class Cell {

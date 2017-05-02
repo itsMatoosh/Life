@@ -11,7 +11,7 @@ import me.matoosh.life.ui.AppFrame;
 
 /**
  * Represents a single simulation.
- * @author Mateusz R�bacz
+ * @author Mateusz Rebacz
  *
  */
 public class Simulation {

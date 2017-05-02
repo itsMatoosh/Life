@@ -9,7 +9,7 @@ import javax.swing.JFrame;
 
 /**
  * The frame of the aplication.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rebacz
  *
  */
 public class AppFrame extends JFrame {

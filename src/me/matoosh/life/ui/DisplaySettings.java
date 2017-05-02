@@ -2,7 +2,7 @@ package me.matoosh.life.ui;
 
 /**
  * Stores the display settings.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rebacz
  *
  */
 public class DisplaySettings {

@@ -2,7 +2,7 @@ package me.matoosh.life.simulation;
 
 /**
  * Manages simulations.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rebacz
  *
  */
 public class SimulationManager {

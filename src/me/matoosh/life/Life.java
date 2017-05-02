@@ -6,7 +6,7 @@ import me.matoosh.life.ui.AppFrame;
 
 /**
  * Main class of the Life project.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rebacz
  *
  */
 public class Life {

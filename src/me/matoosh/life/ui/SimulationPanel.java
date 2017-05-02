@@ -16,7 +16,7 @@ import me.matoosh.life.simulation.SimulationManager;
 
 /**
  * Panel where the life simulation is drawn.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rebacz
  *
  */
 public class SimulationPanel extends JPanel implements MouseListener, MouseMotionListener {

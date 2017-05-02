@@ -4,7 +4,7 @@ import javax.swing.JPanel;
 
 /**
  * Represents the viewport of the simulation window.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rebacz
  *
  */
 public class Viewport {

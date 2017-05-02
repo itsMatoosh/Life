@@ -16,7 +16,7 @@ import me.matoosh.life.simulation.SimulationSettings;
 
 /**
  * Panel with the simulation settings.
- * @author Mateusz Rêbacz
+ * @author Mateusz Rebacz
  *
  */
 public class SettingsPanel extends JPanel {
