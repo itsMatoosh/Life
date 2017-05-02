@@ -2,3 +2,11 @@ language: java
 jdk:
   - oraclejdk8
 script: ant build
+
+deploy:
+  provider: releases
+  api_key: bc64fa3a6b3df149b5364eaae7d91ffe5e17ed23
+  file: Life.jar
+  skip_cleanup: true
+  on:
+    tags: true
