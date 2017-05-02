@@ -6,7 +6,7 @@ script: ant build
 deploy:
   provider: releases
   api_key: 
-    secure: 9b465f986afaa4c27c714049711a2b864d704908
+    secure: ca53f8a24d6685370200e512618f87f9593bab7f
   file: 
    - "README.md"
    - "bin/Life.jar"
